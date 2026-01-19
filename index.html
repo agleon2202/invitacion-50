@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alejandro 50 Años - Confirmación</title>
+  <style>
+    body { margin: 0; font-family: system-ui, Arial, sans-serif; background:#000; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 16px; }
+    .card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      background: #111;
+    }
+
+    /* Imagen */
+    .invite-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  max-width: 100%;
+@media (max-width: 600px) {
+  .wrap { padding: 0; }
+}
+
+      z-index: 1; /* <- imagen abajo del link invisible */
+    }
+
+    /* Botón Confirmar */
+    .cta {
+  position: absolute;
+  left: 72%;
+  top: 86%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+    .btn {
+      border: 0;
+  padding: 10px 14px;   /* 👈 más chico */
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;     /* 👈 letra más pequeña */
+  cursor: pointer;
+  background: #00e5ff;
+  color: #001018;
+  box-shadow: 0 8px 16px rgba(0,229,255,.25);
+    }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .modal h2 { margin: 0 0 10px; font-size: 20px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { font-size: 12px; opacity: .9; }
+    input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(2,6,23,.55);
+      color: #e2e8f0;
+      outline: none;
+    }
+    .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
+    .btn2 {
+      border: 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .cancel { background: rgba(255,255,255,.12); color:#e2e8f0; }
+    .send { background: #22c55e; color: #052e12; }
+    .msg { margin-top: 10px; font-size: 13px; }
+    .ok { color: #86efac; }
+    .err { color: #fca5a5; }
+
+    /* ✅ Link invisible encima del pin rojo (Google Maps) */
+    .map-link {
+      position: absolute;
+      right: 650px;   /* ajusta si hace falta */
+      bottom: 10px;  /* ajusta si hace falta */
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 15;     /* <- CLAVE: encima de la imagen */
+      display: block;  /* <- asegura área clickeable */
+      background: transparent;
+    }
+
+    /* (Opcional) evita estilos raros de links */
+    .map-link:link, .map-link:visited, .map-link:hover, .map-link:active {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <img class="invite-img" src="invitacion.jpg" alt="Invitación" />
+
+      <!-- ✅ Área invisible clickeable sobre el pin rojo -->
+      <a
+        href="https://maps.app.goo.gl/6VU1rdLw8MP7ZP2V7"
+        target="_blank"
+        class="map-link"
+        title="Abrir ubicación en Google Maps"
+        aria-label="Abrir ubicación en Google Maps"
+      ></a>
+
+      <div class="cta">
+        <a class="btn"
+   href="https://forms.gle/PNYgzyx8z8pLJVfa6"
+   target="_blank"
+   rel="noopener">
+  Confirmar
+</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Confirmar asistencia">
+      <h2>Confirmar asistencia</h2>
+
+      <div class="row">
+        <div>
+          <label>Nombre</label>
+          <input id="nombre" placeholder="Ej. Juan" autocomplete="given-name" />
+        </div>
+        <div>
+          <label>Apellido</label>
+          <input id="apellido" placeholder="Ej. Pérez" autocomplete="family-name" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn2 cancel" id="closeModal">Cancelar</button>
+        <button class="btn2 send" id="sendBtn">Enviar</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6KYc4eu1aYgyOf2w_ylCRquMyS7Lxrg78cZ6lsmyS7J9PAaJadDpzpU_nQD2WFOUN_A/exec";
+
+    const backdrop = document.getElementById("backdrop");
+    const openModal = document.getElementById("openModal");
+    const closeModal = document.getElementById("closeModal");
+    const sendBtn = document.getElementById("sendBtn");
+    const msg = document.getElementById("msg");
+
+    const nombre = document.getElementById("nombre");
+    const apellido = document.getElementById("apellido");
+
+    function setMsg(text, kind) {
+      msg.textContent = text || "";
+      msg.className = "msg " + (kind || "");
+    }
+
+    function showModal() {
+      setMsg("");
+      nombre.value = "";
+      apellido.value = "";
+      backdrop.style.display = "flex";
+      setTimeout(() => nombre.focus(), 50);
+    }
+
+    function hideModal() {
+      backdrop.style.display = "none";
+    }
+
+    openModal.addEventListener("click", showModal);
+    closeModal.addEventListener("click", hideModal);
+
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) hideModal();
+    });
+
+    async function send() {
+      const n = nombre.value.trim();
+      const a = apellido.value.trim();
+
+      if (!n || !a) {
+        setMsg("Por favor escribe tu nombre y apellido.", "err");
+        return;
+      }
+
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("PEGA_AQUI")) {
+        setMsg("Falta configurar la URL. Pega tu URL de Apps Script en el archivo index.html.", "err");
+        return;
+      }
+
+      sendBtn.disabled = true;
+      setMsg("Enviando...", "");
+
+      try {
+        const body = new URLSearchParams();
+  body.append("nombre", n);
+  body.append("apellido", a);
+
+  // ✅ 1) Intento principal: sendBeacon (muy estable en file:// y sin CORS)
+  const ok = navigator.sendBeacon(
+    APPS_SCRIPT_URL,
+    new Blob([body.toString()], { type: "application/x-www-form-urlencoded;charset=UTF-8" })
+  );
+
+  if (ok) {
+    setMsg("¡Listo! Tu asistencia quedó confirmada ✅", "ok");
+    setTimeout(hideModal, 1100);
+  } else {
+    // ✅ 2) Fallback: fetch no-cors (por si el navegador no soporta beacon bien)
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: body.toString()
+    });
+
+    setMsg("¡Listo! Tu asistencia quedó confirmada ✅", "ok");
+    setTimeout(hideModal, 1100);
+  }
+} catch (e) {
+  setMsg("Error de conexión. Intenta otra vez.", "err");
+} finally {
+  sendBtn.disabled = false;
+      }
+    }
+
+    sendBtn.addEventListener("click", send);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && backdrop.style.display === "flex") hideModal();
+      if (e.key === "Enter" && backdrop.style.display === "flex") send();
+    });
+  </script>
+</body>
+</html>
