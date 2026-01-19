@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alejandro 50 Años - Confirmación</title>
+
+  <style>
+    body { margin: 0; font-family: system-ui, Arial, sans-serif; background:#000; }
+
+    /* En PC centrado, en cel ocupa todo */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 16px; }
+    @media (max-width: 600px) {
+      .wrap { padding: 0; max-width: 100%; }
+    }
+
+    .card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      background: #111;
+    }
+    @media (max-width: 600px) {
+      .card { border-radius: 0; }
+    }
+
+    /* Imagen */
+    .invite-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Botón Confirmar */
+    .cta{
+      position: absolute;
+      right: 2%;
+      bottom: 0.1%;
+      z-index: 20;
+    }
+
+    /* ✅ BOTÓN “DORADO” IGUALADO A LA INVITACIÓN (chevrons) */
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 0;
+      padding: clamp(10px, 2vw, 14px) clamp(18px, 3.5vw, 28px);
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: clamp(13px, 2.2vw, 16px);
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+
+      /* Dorado cálido (extraído de la zona naranja/dorada de la imagen) */
+      background: linear-gradient(135deg,
+        #FFEDC8 0%,
+        #FABF91 18%,
+        #F2A468 40%,
+        #DE8D4D 58%,
+        #F2A468 78%,
+        #FFEDC8 100%
+      );
+
+      color: #2B1A05; /* café oscuro elegante (para contraste estable) */
+
+      /* brillo fino “metal” + volumen */
+      box-shadow:
+        0 10px 22px rgba(222,141,77,.38),
+        0 3px 10px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.65),
+        inset 0 -2px 0 rgba(43,26,5,.18);
+
+      /* Hace que el borde se vea “premium” sin cambiar el color */
+      outline: 1px solid rgba(255,237,200,.35);
+      outline-offset: -1px;
+
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:hover{
+      transform: translateY(-1px);
+      filter: saturate(1.05) brightness(1.03);
+      box-shadow:
+        0 14px 28px rgba(222,141,77,.48),
+        0 4px 14px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.75),
+        inset 0 -2px 0 rgba(43,26,5,.16);
+    }
+
+    .btn:active{
+      transform: translateY(0);
+      filter: saturate(1.02) brightness(1.0);
+      box-shadow:
+        0 8px 18px rgba(222,141,77,.40),
+        0 3px 10px rgba(0,0,0,.40),
+        inset 0 2px 6px rgba(0,0,0,.22);
+    }
+
+    .btn:focus-visible{
+      outline: 2px solid rgba(255,237,200,.7);
+      outline-offset: 2px;
+    }
+
+    /* ✅ Link invisible encima del pin rojo (Google Maps) - responsive */
+    .map-link{
+      position: absolute;
+
+      /* Ajusta SOLO estos dos si quieres moverlo */
+      left: 27%;
+      top: 96%;
+
+      transform: translate(-50%, -50%);
+      width: clamp(36px, 6vw, 56px);
+      height: clamp(36px, 6vw, 56px);
+
+      cursor: pointer;
+      z-index: 15;
+      display: block;
+    }
+
+    /* 📱 Ajustes SOLO para celular (NO afecta computadora) */
+    @media (max-width: 600px){
+      .btn{
+        padding: 8px 16px;   /* más pequeño */
+        font-size: 13px;     /* texto más compacto */
+        font-weight: 700;
+      }
+
+      .cta{
+        right: 3%;
+        bottom: 3%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <img class="invite-img" src="invitacion.jpg" alt="Invitación" />
+
+      <!-- Pin del mapa (zona clickeable) -->
+      <a
+        href="https://maps.app.goo.gl/6VU1rdLw8MP7ZP2V7"
+        target="_blank"
+        class="map-link"
+        title="Abrir ubicación en Google Maps"
+        aria-label="Abrir ubicación en Google Maps"
+        rel="noopener"
+      ></a>
+
+      <!-- Botón confirmar -->
+      <div class="cta">
+        <a class="btn"
+           href="https://forms.gle/PNYgzyx8z8pLJVfa6"
+           target="_blank"
+           rel="noopener">
+          Confirmar
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
